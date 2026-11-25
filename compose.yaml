@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: et_history
+      POSTGRES_USER: et
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-et_local_dev}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command: ["postgres", "-c", "shared_buffers=128MB", "-c", "max_connections=30"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U et -d et_history"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  data:
+    build: .
+    environment:
+      DATABASE_URL: postgres://et:${POSTGRES_PASSWORD:-et_local_dev}@postgres:5432/et_history
+      ET_DATA_BIND: 0.0.0.0:8088
+      ET_DATA_TOKEN: ${ET_DATA_TOKEN:-}
+      ET_DATA_RETENTION_DAYS: ${ET_DATA_RETENTION_DAYS:-30}
+      ET_DATA_BOOTSTRAP_MINUTES: ${ET_DATA_BOOTSTRAP_MINUTES:-60}
+      COINGECKO_API_KEY: ${COINGECKO_API_KEY:-}
+      # Paused: do not inherit ET_HL_ENABLED=true from an old .env or shell.
+      ET_HL_ENABLED: "false"
+      ET_HL_MAX_ADDRESSES: ${ET_HL_MAX_ADDRESSES:-256}
+      ET_HL_MIN_POSITION_USD: ${ET_HL_MIN_POSITION_USD:-10000}
+    ports:
+      - "${ET_DATA_HOST:-127.0.0.1}:${ET_DATA_PORT:-8088}:8088"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  pgdata:
+

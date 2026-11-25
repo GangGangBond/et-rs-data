@@ -1,0 +1,40 @@
+# Rust build output
+/target/
+**/target/
+*.rs.bk
+*.pdb
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local databases and volumes
+*.db
+*.sqlite
+*.sqlite3
+/pgdata/
+/data/
+/backups/
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+*.tmp
+*.pid
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts
+/dist/
+
+# Internal incident notes (may contain host/IP details)
+DIAGNOSIS-*.md
+VALIDATION.md

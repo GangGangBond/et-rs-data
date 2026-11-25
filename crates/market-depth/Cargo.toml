@@ -1,0 +1,9 @@
+[package]
+name = "market-depth"
+version = "0.1.0"
+edition = "2021"
+description = "Shared order-book and depth-window types for et-rs and et-data-service"
+license = "MIT"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
